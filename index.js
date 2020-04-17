@@ -52,6 +52,7 @@ function Main() {
         o.cells[x][y] = cell;
       }
     }
+    o.draw()
   };
   o.draw = () => {
     o.cells.forEach((row) => {
@@ -103,13 +104,17 @@ function draw() {
   main.draw();
 }
 let main;
-window.onload = () => {
-  main = new Main();
-  main.init(initData1);
+
+function start(){
+
   setInterval(() => {
   ctx.clearRect(0, 0, 500, 500);
   window.requestAnimationFrame(function () {
     main.draw();
   });
   }, 1000 / 5);
+}
+window.onload = () => {
+  main = new Main();
+  main.init(initData1);
 };
