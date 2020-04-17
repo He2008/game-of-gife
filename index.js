@@ -38,11 +38,15 @@ function Cell(x, y) {
 function Main() {
   let o = {
     cells: [],
+    columns: 100,
+    rows: 100,
+    gridWidth:10,
+    speed:10
   };
   o.init = (data) => {
-    for (let x = 0; x < 101; x++) {
-      for (let y = 0; y < 101; y++) {
-        let cell = new Cell(x * 10, y * 10);
+    for (let x = 0; x < o.columns + 1; x++) {
+      for (let y = 0; y <o.rows + 1; y++) {
+        let cell = new Cell(x * o.gridWidth, y * o.gridWidth);
         data.forEach((item) => {
           if (item[0] === x && item[1] === y) {
             cell.live = true;
@@ -52,7 +56,7 @@ function Main() {
         o.cells[x][y] = cell;
       }
     }
-    o.draw()
+    o.draw();
   };
   o.draw = () => {
     o.cells.forEach((row) => {
@@ -67,13 +71,14 @@ function Main() {
     o.cells.forEach((row) => {
       row.forEach((cell) => {
         neighborNum = 0;
-        x = cell.x / 10;
-        y = cell.y / 10;
+        x = cell.x / o.gridWidth;
+        y = cell.y /o.gridWidth ;
+
         for (let i = x - 1; i <= x + 1; i++) {
           for (let l = y - 1; l <= y + 1; l++) {
             neighbor = o.cells[i] && o.cells[i][l];
 
-            if (neighbor && neighbor.live&&(i!==x||y!==l)) {
+            if (neighbor && neighbor.live && (i !== x || y !== l)) {
               neighborNum++;
             }
           }
@@ -82,20 +87,28 @@ function Main() {
         if (cell.live) {
           if (neighborNum > 3 || neighborNum < 2) {
             cell.next = false;
-          }else{
-            cell.next = true
+          } else {
+            cell.next = true;
           }
         } else {
           if (neighborNum === 3) {
             cell.next = true;
-          }else{
-            cell.next = false
+          } else {
+            cell.next = false;
           }
         }
       });
     });
     o.cells.forEach((row) => row.forEach((cell) => cell.change()));
   };
+  o.start = function(){
+    setInterval(() => {
+      ctx.clearRect(0, 0, 500, 500);
+      window.requestAnimationFrame(function () {
+        o.draw();
+      });
+    }, 1000 / o.speed);
+  }
   return o;
 }
 
@@ -105,14 +118,8 @@ function draw() {
 }
 let main;
 
-function start(){
-
-  setInterval(() => {
-  ctx.clearRect(0, 0, 500, 500);
-  window.requestAnimationFrame(function () {
-    main.draw();
-  });
-  }, 1000 / 5);
+function start() {
+  main.start()
 }
 window.onload = () => {
   main = new Main();
